@@ -1,0 +1,29 @@
+*** an environment variable
+ConnectionStrings__Funnelika
+
+the double underscore (__) — it represents : in configuration paths.
+
+*** To make it permanent:
+/> setx ConnectionStrings__Funnelika "Data Source=_the_server_;Initial Catalog=_the_db_;Integrated Security=True;Trust Server Certificate=True;"
+for instance: Data Source=(local)\SQLEXPRESS
+
+Note: You need to open a new command prompt for the changes to take effect.
+
+*** To check if it was set correctly:
+/> echo %ConnectionStrings__Funnelika%
+
+or
+/> set | find "ConnectionStrings"
+
+*** Run migrations from the solution folder:
+dotnet ef migrations add InitialCreate --startup-project External/API --project External/Persistence --output-dir "Database/Migrations"
+dotnet ef database update --startup-project External/API --project External/Persistence
+
+Explanation:
+    --project → where migrations are stored (External/Persistence)
+    --startup-project → where configuration lives (External/API)
+
+test it at:
+https://localhost:7169/api/v1/products/ac4cce4e-852a-4f96-b8c4-17a6a1559465
+
+

@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Core/Application/Application.csproj" Id="e7a5864d-87c8-4ac0-9e1d-7a1aecd59920" />
+    <Project Path="Core/Domain/Domain.csproj" Id="6e802335-d316-436e-8fd5-e8bf2c545431" />
+  </Folder>
+  <Folder Name="/External/">
+    <Project Path="External/Api/Api.csproj" Id="34c5837a-3056-4939-925a-51d79d766ddb" />
+    <Project Path="External/Persistence/Persistence.csproj" Id="e34118bc-c9c2-478b-958c-765b45faace8" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="notes.txt" />
+  </Folder>
+</Solution>
