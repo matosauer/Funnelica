@@ -1,11 +1,11 @@
 using Application.Queries;
 using Application.Services;
-using Asp.Versioning.Conventions;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database;
 using Persistence.Queries;
 using Persistence.Repositories;
+using Scalar.AspNetCore;
 
 namespace Api
 {
@@ -25,25 +25,17 @@ namespace Api
                     builder.Configuration.GetConnectionString("Funnelika") ?? throw new InvalidOperationException("Connection string not found!")));
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
 
-            builder.Services
-                .AddApiVersioning(options =>
-                {
-                    options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
-                    options.AssumeDefaultVersionWhenUnspecified = true;
-                    //options.ReportApiVersions = true;
-                })
-                .AddMvc(options =>
-                {
-                    options.Conventions.Add(new VersionByNamespaceConvention());
-                })
-                .AddApiExplorer(options =>
-                {
-                    options.GroupNameFormat = "'v'V";
-                    options.SubstituteApiVersionInUrl = true;
-                });
+            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+            builder.Services.AddApiVersioning()
+            .AddApiExplorer(setup =>
+            {
+                setup.GroupNameFormat = "'v'VVV";
+                setup.SubstituteApiVersionInUrl = true;
+            });
+
+            builder.Services.AddOpenApi("v1");
+            builder.Services.AddOpenApi("v2");
 
             var app = builder.Build();
 
@@ -51,6 +43,9 @@ namespace Api
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.MapScalarApiReference( options => {
+                    options.AddDocuments("v1", "v2");
+                });
             }
 
             app.UseHttpsRedirection();

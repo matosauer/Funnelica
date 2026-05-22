@@ -24,6 +24,14 @@ Explanation:
     --startup-project → where configuration lives (External/API)
 
 test it at:
-https://localhost:7169/api/v1/products/ac4cce4e-852a-4f96-b8c4-17a6a1559465
+http://localhost:5281/api/v1/products/ac4cce4e-852a-4f96-b8c4-17a6a1559465
+
+To view the generated OpenAPI documents
+http://localhost:5281/openapi/v1.json
+http://localhost:5281/openapi/v2.json
+
+Scalar renders OpenAPI documents
+http://localhost:5281/scalar/
+
 
 
