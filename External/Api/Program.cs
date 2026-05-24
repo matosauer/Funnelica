@@ -23,7 +23,7 @@ namespace Api
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("Funnelika") ?? throw new InvalidOperationException("Connection string not found!")));
+                    builder.Configuration.GetConnectionString("Funnelica") ?? throw new InvalidOperationException("Connection string not found!")));
 
             builder.Services.AddControllers();
 
