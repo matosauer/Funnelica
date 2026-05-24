@@ -13,9 +13,11 @@ namespace Api.Controllers.v1
     public class ProductsController : ControllerBase
     {
         //private readonly ProductService service;
+        private readonly ILogger<ProductsController> logger;
 
-        public ProductsController(/*ProductService service*/)
+        public ProductsController(/*ProductService service*/ ILogger<ProductsController> logger)
         {
+            this.logger = logger;
             // this.service = service;
         }
 
@@ -23,6 +25,10 @@ namespace Api.Controllers.v1
         [HttpGet]
         public async Task<IEnumerable<Product>> Get()
         {
+            logger.LogDebug("Debug message");
+            logger.LogInformation("Info message");
+            logger.LogError("Error message");
+
             throw new NotImplementedException();
         }
 

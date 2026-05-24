@@ -6,6 +6,7 @@ using Persistence.Database;
 using Persistence.Queries;
 using Persistence.Repositories;
 using Scalar.AspNetCore;
+using Serilog;
 
 namespace Api
 {
@@ -37,13 +38,22 @@ namespace Api
             builder.Services.AddOpenApi("v1");
             builder.Services.AddOpenApi("v2");
 
+            builder.Host.UseSerilog((context, loggerConfiguration) =>
+            {
+                loggerConfiguration.ReadFrom.Configuration(
+                    context.Configuration
+                );
+            });
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
-                app.MapScalarApiReference( options => {
+                app.MapScalarApiReference(options =>
+                {
                     options.AddDocuments("v1", "v2");
                 });
             }
