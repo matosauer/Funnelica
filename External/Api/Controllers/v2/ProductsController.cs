@@ -29,7 +29,7 @@ namespace Api.Controllers.v2
 
         // GET api/<ProductsController>/5
         [HttpGet("{id}")]
-        public async Task<Results<Ok<ProductResponse>, NotFound>> Get(Guid id, IGetProductByIdQuery handler)
+        public async Task<Results<Ok<ProductTO>, NotFound>> Get(Guid id, IGetProductByIdQuery handler)
         {
             var result = await handler.HandleAsync(id);
             return result != null ? TypedResults.Ok(result) : TypedResults.NotFound();

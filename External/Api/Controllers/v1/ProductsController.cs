@@ -23,7 +23,7 @@ namespace Api.Controllers.v1
 
         // GET: api/<ProductsController>
         [HttpGet]
-        public async Task<IEnumerable<Product>> Get()
+        public async Task<IEnumerable<ProductTO>> Get()
         {
             logger.LogDebug("Debug message");
             logger.LogInformation("Info message");
@@ -34,9 +34,9 @@ namespace Api.Controllers.v1
 
         // GET api/<ProductsController>/5
         [HttpGet("{id}")]
-        [ProducesResponseType<Product>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ProductTO>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ProductResponse>> Get(Guid id, IGetProductByIdQuery handler)
+        public async Task<ActionResult<ProductTO>> Get(Guid id, IGetProductByIdQuery handler)
         {
             var result = await handler.HandleAsync(id);
             return result != null ? Ok(result) : NotFound();

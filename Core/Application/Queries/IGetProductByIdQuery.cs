@@ -2,5 +2,5 @@
 
 public interface IGetProductByIdQuery
 {
-    Task<ProductResponse?> HandleAsync(Guid id);
+    Task<ProductTO?> HandleAsync(Guid id);
 }
