@@ -25,10 +25,6 @@ namespace Api.Controllers.v1
         [HttpGet]
         public async Task<IEnumerable<ProductTO>> Get()
         {
-            logger.LogDebug("Debug message");
-            logger.LogInformation("Info message");
-            logger.LogError("Error message");
-
             throw new NotImplementedException();
         }
 

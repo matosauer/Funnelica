@@ -22,8 +22,9 @@ namespace Api.Controllers.v2
 
         // GET: api/<ProductsController>
         [HttpGet]
-        public async Task<IEnumerable<Product>> Get()
+        public async Task<IEnumerable<ProductTO>> Get()
         {
+
             throw new NotImplementedException();
         }
 
