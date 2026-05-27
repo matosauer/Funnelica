@@ -1,6 +1,6 @@
-﻿using Application.Queries;
+﻿using Application.DTOs;
+using Application.Queries;
 using Asp.Versioning;
-using Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +22,7 @@ namespace Api.Controllers.v2
 
         // GET: api/<ProductsController>
         [HttpGet]
-        public async Task<IEnumerable<ProductTO>> Get()
+        public async Task<IEnumerable<ProductDto>> Get()
         {
 
             throw new NotImplementedException();
@@ -30,7 +30,7 @@ namespace Api.Controllers.v2
 
         // GET api/<ProductsController>/5
         [HttpGet("{id}")]
-        public async Task<Results<Ok<ProductTO>, NotFound>> Get(Guid id, IGetProductByIdQuery handler)
+        public async Task<Results<Ok<ProductDto>, NotFound>> Get(Guid id, IGetProductByIdQuery handler)
         {
             var result = await handler.HandleAsync(id);
             return result != null ? TypedResults.Ok(result) : TypedResults.NotFound();

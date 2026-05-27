@@ -1,4 +1,5 @@
-﻿using Application.Queries;
+﻿using Application.DTOs;
+using Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database;
 
@@ -12,12 +13,12 @@ namespace Persistence.Queries
         {
             this.context = context;
         }
-        public async Task<ProductResponse?> HandleAsync(Guid id)
+        public async Task<ProductDto?> HandleAsync(Guid id)
         {
             var product = await context
                 .Products
                 .AsNoTracking()
-                .Select(p => new ProductResponse
+                .Select(p => new ProductDto
                 {
                     Id = p.Id,
                     Name = p.Name,

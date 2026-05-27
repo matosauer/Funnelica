@@ -1,6 +1,6 @@
-﻿namespace Application.Queries
+﻿namespace Application.DTOs
 {
-    public class ProductTO
+    public class ProductDto
     {
         public Guid Id { get; set; }
         public required string Name { get; set; }

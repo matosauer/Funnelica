@@ -1,4 +1,5 @@
-﻿using Application.Queries;
+﻿using Application.DTOs;
+using Application.Queries;
 using Asp.Versioning;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -23,16 +24,16 @@ namespace Api.Controllers.v1
 
         // GET: api/<ProductsController>
         [HttpGet]
-        public async Task<IEnumerable<ProductTO>> Get()
+        public async Task<IEnumerable<ProductDto>> Get()
         {
             throw new NotImplementedException();
         }
 
         // GET api/<ProductsController>/5
         [HttpGet("{id}")]
-        [ProducesResponseType<ProductTO>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ProductDto>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ProductTO>> Get(Guid id, IGetProductByIdQuery handler)
+        public async Task<ActionResult<ProductDto>> Get(Guid id, IGetProductByIdQuery handler)
         {
             var result = await handler.HandleAsync(id);
             return result != null ? Ok(result) : NotFound();

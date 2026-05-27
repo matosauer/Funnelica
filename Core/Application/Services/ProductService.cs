@@ -1,12 +1,13 @@
-﻿using Domain.Repositories;
+﻿using Domain.Entities;
+using Domain.Repositories;
 
 namespace Application.Services;
 
 public class ProductService
 {
-    private readonly IProductRepository repository;
+    private readonly IGenericRepository<Product> repository;
 
-    public ProductService(IProductRepository repository)
+    public ProductService(IGenericRepository<Product> repository)
     {
         this.repository = repository;
     }
@@ -28,7 +29,8 @@ public class ProductService
             QuantityInStock = quantityInStock,
             CreatedOnUtc = DateTime.UtcNow
         };
-        return await repository.InsertAsync(product);
+        await repository.AddAsync(product);
+        return product.Id;
     }
 
     public async Task UpdateProductAsync(Guid id, string name, string description, string pictureUrl, long price, int quantityInStock)

@@ -1,6 +1,8 @@
-﻿namespace Application.Queries;
+﻿using Application.DTOs;
+
+namespace Application.Queries;
 
 public interface IGetProductByIdQuery
 {
-    Task<ProductTO?> HandleAsync(Guid id);
+    Task<ProductDto?> HandleAsync(Guid id);
 }

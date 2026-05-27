@@ -18,7 +18,7 @@ namespace Api
 
             // Add services to the container.
             builder.Services.AddScoped<ProductService>();
-            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IGetProductByIdQuery, GetProductByIdQuery>();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
