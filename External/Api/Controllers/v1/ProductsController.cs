@@ -13,19 +13,19 @@ namespace Api.Controllers.v1
     {
         private readonly ILogger<ProductsController> logger;
 
-        public ProductsController(/*ProductService service*/ ILogger<ProductsController> logger)
+        public ProductsController(ILogger<ProductsController> logger)
         {
             this.logger = logger;
         }
 
-        // GET: api/<ProductsController>
+        // GET: api/v1/<ProductsController>
         [HttpGet]
         public async Task<IEnumerable<ProductDto>> Get()
         {
             throw new NotImplementedException();
         }
 
-        // GET api/<ProductsController>/23e4567-e89b-12d3-a456-426614174000
+        // GET api/v1/<ProductsController>/<id>
         [HttpGet("{id}")]
         [ProducesResponseType<ProductDto>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -40,13 +40,13 @@ namespace Api.Controllers.v1
         {
         }
 
-        // PUT api/<ProductsController>/23e4567-e89b-12d3-a456-426614174000
+        // PUT api/v1/<ProductsController>/<id>
         [HttpPut("{id}")]
         public void Put(Guid id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<ProductsController>/23e4567-e89b-12d3-a456-426614174000
+        // DELETE api/v1/<ProductsController>/<id>
         [HttpDelete("{id}")]
         public void Delete(Guid id)
         {

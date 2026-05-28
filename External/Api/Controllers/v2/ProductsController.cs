@@ -11,6 +11,7 @@ namespace Api.Controllers.v2
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("2.0")]
+    [Produces("application/json")]
     public class ProductsController : ControllerBase
     {
         private readonly ProductService service;
@@ -20,14 +21,16 @@ namespace Api.Controllers.v2
             this.service = service;
         }
 
-        // GET: api/<ProductsController>
+        // GET: api/v2/<ProductsController>
         [HttpGet]
-        public async Task<IEnumerable<ProductDto>> Get()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> Get()
         {
-            return await service.GetAllProductsAsync();
+            var products = await service.GetAllProductsAsync();
+            return Ok(products);
         }
 
-        // GET api/<ProductsController>/23e4567-e89b-12d3-a456-426614174000
+        // GET api/v2/<ProductsController>/<id>
         [HttpGet("{id}")]
         public async Task<Results<Ok<ProductDto>, NotFound>> Get(Guid id)
         {
@@ -35,26 +38,39 @@ namespace Api.Controllers.v2
             return product != null ? TypedResults.Ok(product) : TypedResults.NotFound();
         }
 
-        // POST api/<ProductsController>
+        // POST api/v2/<ProductsController>
         [HttpPost]
-        public async Task<ProductDto> Post([FromBody] ProductDto dto)
+        public async Task<Results<CreatedAtRoute<ProductDto>, BadRequest>> Post([FromBody] ProductDto dto)
         {
             var productDto = await service.CreateProductAsync(dto);
-            return productDto;
+            // Return 201 Created with a Location header to the new resource
+            return TypedResults.CreatedAtRoute(
+                        routeName: nameof(Get),
+                        routeValues: new { id = productDto.Id },
+                        value: productDto
+                    );
         }
 
-        // PUT api/<ProductsController>/23e4567-e89b-12d3-a456-426614174000
+        // PUT api/v2/<ProductsController>/<id>
         [HttpPut("{id}")]
-        public async Task Update(Guid id, [FromBody] ProductDto dto)
+        public async Task<Results<NoContent, BadRequest, NotFound>> Update(Guid id, [FromBody] ProductDto dto)
         {
+            // Optionally validate id matches dto.Id
+            if (dto == null || dto.Id == Guid.Empty || dto.Id != id)
+            {
+                return TypedResults.BadRequest();
+            }
+
             await service.UpdateProductAsync(dto);
+            return TypedResults.NoContent();
         }
 
-        // DELETE api/<ProductsController>/23e4567-e89b-12d3-a456-426614174000
+        // DELETE api/v2/<ProductsController>/<id>
         [HttpDelete("{id}")]
-        public async Task Delete(Guid id)
+        public async Task<Results<NoContent, NotFound>> Delete(Guid id)
         {
             await service.DeleteProductAsync(id);
+            return TypedResults.NoContent();
         }
     }
 }
