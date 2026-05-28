@@ -1,62 +1,128 @@
-﻿using Domain.Entities;
+﻿using Application.DTOs;
+using Domain.Entities;
 using Domain.Repositories;
 
 namespace Application.Services;
 
 public class ProductService
 {
-    private readonly IGenericRepository<Product> repository;
+    private readonly IUnitOfWork unitOfWork;
 
-    public ProductService(IGenericRepository<Product> repository)
+    public ProductService(IUnitOfWork unitOfWork)
     {
-        this.repository = repository;
+        this.unitOfWork = unitOfWork;
     }
 
-    //public async Task<List<Product>> GetAllProductsAsync()
-    //{
-    //    return await repository.GetAllAsync();
-    //}
-
-    public async Task<Guid> CreateProductAsync(string name, string description, string pictureUrl, long price, int quantityInStock)
+    public async Task<List<ProductDto>> GetAllProductsAsync()
     {
-        var product = new Domain.Entities.Product
+        var products = await unitOfWork.ProductRepository.GetAllAsync();
+        return products.Select(p => new ProductDto
         {
-            Id = Guid.NewGuid(),
-            Name = name,
-            Description = description,
-            PictureUrl = pictureUrl,
-            Price = price,
-            QuantityInStock = quantityInStock,
-            CreatedOnUtc = DateTime.UtcNow
-        };
-        await repository.AddAsync(product);
-        return product.Id;
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            Price = p.Price
+        }).ToList();
     }
 
-    public async Task UpdateProductAsync(Guid id, string name, string description, string pictureUrl, long price, int quantityInStock)
+    public async Task<ProductDto> GetByIdAsync(Guid id)
     {
-        var product = await repository.GetByIdAsync(id);
+        var product = await unitOfWork.ProductRepository.GetByIdAsync(id);
         if (product is null)
         {
             throw new InvalidOperationException($"Product with id {id} not found.");
         }
-        product.Name = name;
-        product.Description = description;
-        product.PictureUrl = pictureUrl;
-        product.Price = price;
-        product.QuantityInStock = quantityInStock;
-        await repository.UpdateAsync(product);
+
+        return new ProductDto
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price
+        };
+    }
+
+    public async Task<ProductDto> CreateProductAsync(ProductDto dto)
+    {
+        var product = new Product
+        {
+            Id = Guid.Empty,
+            Name = dto.Name,
+            Description = dto.Description,
+            PictureUrl = dto.PictureUrl,
+            Price = dto.Price,
+            QuantityInStock = dto.QuantityInStock,
+            CreatedOnUtc = DateTime.UtcNow
+        };
+
+        await unitOfWork.ProductRepository.AddAsync(product);
+        await unitOfWork.SaveAsync();
+
+        ProductDto productDto = new ProductDto
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            PictureUrl = product.PictureUrl,
+            Price = product.Price,
+            QuantityInStock = product.QuantityInStock
+        };
+
+        return productDto;
+    }
+
+    public async Task UpdateProductAsync(ProductDto dto)
+    {
+        var product = await unitOfWork.ProductRepository.GetByIdAsync(dto.Id);
+        if (product is null)
+        {
+            throw new InvalidOperationException($"Product with id {dto.Id} not found.");
+        }
+
+        product.Name = dto.Name;
+        product.Description = dto.Description;
+        product.PictureUrl = dto.PictureUrl;
+        product.Price = dto.Price;
+        product.QuantityInStock = dto.QuantityInStock;
+
+        await unitOfWork.ProductRepository.UpdateAsync(product);
+        await unitOfWork.SaveAsync();
+    }
+
+    public async Task DeleteProductAsync(Guid id)
+    {
+        var product = await unitOfWork.ProductRepository.GetByIdAsync(id);
+        if (product is null)
+        {
+            throw new InvalidOperationException($"Product with id {id} not found.");
+        }
+        await unitOfWork.ProductRepository.DeleteAsync(product);
+        await unitOfWork.SaveAsync();
     }
 
     public async Task PublishProductAsync(Guid id)
     {
-        var product = await repository.GetByIdAsync(id);
+        var product = await unitOfWork.ProductRepository.GetByIdAsync(id);
         if (product is null)
         {
             throw new InvalidOperationException($"Product with id {id} not found.");
         }
+
         product.PublishedOnUtc = DateTime.UtcNow;
-        await repository.UpdateAsync(product);
+        await unitOfWork.ProductRepository.UpdateAsync(product);
+        await unitOfWork.SaveAsync();
     }
 
+    public async Task UnpublishProductAsync(Guid id)
+    {
+        var product = await unitOfWork.ProductRepository.GetByIdAsync(id);
+        if (product is null)
+        {
+            throw new InvalidOperationException($"Product with id {id} not found.");
+        }
+
+        product.PublishedOnUtc = null;
+        await unitOfWork.ProductRepository.UpdateAsync(product);
+        await unitOfWork.SaveAsync();
+    }
 }

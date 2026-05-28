@@ -1,9 +1,7 @@
-using Application.Queries;
 using Application.Services;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database;
-using Persistence.Queries;
 using Persistence.Repositories;
 using Scalar.AspNetCore;
 using Serilog;
@@ -19,7 +17,7 @@ namespace Api
             // Add services to the container.
             builder.Services.AddScoped<ProductService>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            builder.Services.AddScoped<IGetProductByIdQuery, GetProductByIdQuery>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfwork>();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(

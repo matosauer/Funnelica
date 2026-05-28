@@ -1,5 +1,5 @@
 ﻿using Application.DTOs;
-using Application.Queries;
+using Application.Services;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -13,45 +13,48 @@ namespace Api.Controllers.v2
     [ApiVersion("2.0")]
     public class ProductsController : ControllerBase
     {
-        //private readonly ProductService service;
+        private readonly ProductService service;
 
-        public ProductsController(/*ProductService service*/)
+        public ProductsController(ProductService service)
         {
-            // this.service = service;
+            this.service = service;
         }
 
         // GET: api/<ProductsController>
         [HttpGet]
         public async Task<IEnumerable<ProductDto>> Get()
         {
-
-            throw new NotImplementedException();
+            return await service.GetAllProductsAsync();
         }
 
-        // GET api/<ProductsController>/5
+        // GET api/<ProductsController>/23e4567-e89b-12d3-a456-426614174000
         [HttpGet("{id}")]
-        public async Task<Results<Ok<ProductDto>, NotFound>> Get(Guid id, IGetProductByIdQuery handler)
+        public async Task<Results<Ok<ProductDto>, NotFound>> Get(Guid id)
         {
-            var result = await handler.HandleAsync(id);
-            return result != null ? TypedResults.Ok(result) : TypedResults.NotFound();
+            var product = await service.GetByIdAsync(id);
+            return product != null ? TypedResults.Ok(product) : TypedResults.NotFound();
         }
 
         // POST api/<ProductsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ProductDto> Post([FromBody] ProductDto dto)
         {
+            var productDto = await service.CreateProductAsync(dto);
+            return productDto;
         }
 
-        // PUT api/<ProductsController>/5
+        // PUT api/<ProductsController>/23e4567-e89b-12d3-a456-426614174000
         [HttpPut("{id}")]
-        public void Put(Guid id, [FromBody] string value)
+        public async Task Update(Guid id, [FromBody] ProductDto dto)
         {
+            await service.UpdateProductAsync(dto);
         }
 
-        // DELETE api/<ProductsController>/5
+        // DELETE api/<ProductsController>/23e4567-e89b-12d3-a456-426614174000
         [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        public async Task Delete(Guid id)
         {
+            await service.DeleteProductAsync(id);
         }
     }
 }
