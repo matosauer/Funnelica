@@ -42,12 +42,18 @@ namespace Api.Controllers.v2
         [HttpPost]
         public async Task<Results<CreatedAtRoute<ProductDto>, BadRequest>> Post([FromBody] ProductDto dto)
         {
-            var productDto = await service.CreateProductAsync(dto);
-            // Return 201 Created with a Location header to the new resource
+            var actResult = await service.CreateProductAsync(dto);
+
+            if (!actResult.Success)
+            {
+                // Optionally log validation errors here
+                return TypedResults.BadRequest();
+            }
+
             return TypedResults.CreatedAtRoute(
                         routeName: nameof(Get),
-                        routeValues: new { id = productDto.Id },
-                        value: productDto
+                        routeValues: new { id = actResult?.Product?.Id },
+                        value: actResult?.Product
                     );
         }
 
@@ -61,16 +67,16 @@ namespace Api.Controllers.v2
                 return TypedResults.BadRequest();
             }
 
-            await service.UpdateProductAsync(dto);
-            return TypedResults.NoContent();
+            ActResult actResult = await service.UpdateProductAsync(dto);
+            return actResult.Success ? TypedResults.NoContent() : TypedResults.NotFound();
         }
 
         // DELETE api/v2/<ProductsController>/<id>
         [HttpDelete("{id}")]
         public async Task<Results<NoContent, NotFound>> Delete(Guid id)
         {
-            await service.DeleteProductAsync(id);
-            return TypedResults.NoContent();
+            var actResult = await service.DeleteProductAsync(id);
+            return actResult.Success ? TypedResults.NoContent() : TypedResults.NotFound();
         }
     }
 }
