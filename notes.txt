@@ -34,4 +34,5 @@ Scalar renders OpenAPI documents
 http://localhost:5281/scalar/
 
 
-
+Run tests:
+dotnet test External/Api.Tests/Api.Tests.csproj

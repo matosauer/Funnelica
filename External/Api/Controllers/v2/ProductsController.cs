@@ -14,9 +14,9 @@ namespace Api.Controllers.v2
     [Produces("application/json")]
     public class ProductsController : ControllerBase
     {
-        private readonly ProductService service;
+        private readonly IProductService service;
 
-        public ProductsController(ProductService service)
+        public ProductsController(IProductService service)
         {
             this.service = service;
         }

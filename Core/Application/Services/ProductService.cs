@@ -5,7 +5,7 @@ using Domain.Repositories;
 
 namespace Application.Services;
 
-public class ProductService
+public class ProductService : IProductService
 {
     private readonly IUnitOfWork unitOfWork;
 
