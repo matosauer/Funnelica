@@ -40,26 +40,31 @@ namespace Api.Controllers.v2
 
         // POST api/v2/<ProductsController>
         [HttpPost]
-        public async Task<Results<CreatedAtRoute<ProductDto>, BadRequest>> Post([FromBody] ProductDto dto)
+        public async Task<Results<Created<ProductDto>, NotFound, BadRequest>> Post([FromBody] ProductDto dto)
         {
-            var actResult = await service.CreateProductAsync(dto);
+            var result = await service.CreateProductAsync(dto);
 
-            if (!actResult.Success)
+            if (result.Success)
             {
-                // Optionally log validation errors here
+                return TypedResults.Created($"/api/products/{result.ProductDto?.Id}", result.ProductDto);
+            }
+
+            if (result.FailureType == FailureType.Validation || result.FailureType == FailureType.BusinessRule)
+            {
                 return TypedResults.BadRequest();
             }
 
-            return TypedResults.CreatedAtRoute(
-                        routeName: nameof(Get),
-                        routeValues: new { id = actResult?.Product?.Id },
-                        value: actResult?.Product
-                    );
+            if (result.FailureType == FailureType.NotFound)
+            {
+                return TypedResults.NotFound();
+            }
+
+            return TypedResults.BadRequest();
         }
 
         // PUT api/v2/<ProductsController>/<id>
         [HttpPut("{id}")]
-        public async Task<Results<NoContent, BadRequest, NotFound>> Update(Guid id, [FromBody] ProductDto dto)
+        public async Task<Results<NoContent, NotFound, BadRequest>> Update(Guid id, [FromBody] ProductDto dto)
         {
             // Optionally validate id matches dto.Id
             if (dto == null || dto.Id == Guid.Empty || dto.Id != id)
@@ -67,16 +72,49 @@ namespace Api.Controllers.v2
                 return TypedResults.BadRequest();
             }
 
-            ActResult actResult = await service.UpdateProductAsync(dto);
-            return actResult.Success ? TypedResults.NoContent() : TypedResults.NotFound();
+            var result = await service.UpdateProductAsync(dto);
+
+            if (result.Success)
+            {
+                return TypedResults.NoContent();
+            }
+
+            if (result.FailureType == FailureType.Validation || result.FailureType == FailureType.BusinessRule)
+            {
+                return TypedResults.BadRequest();
+            }
+
+            if (result.FailureType == FailureType.NotFound)
+            {
+                return TypedResults.NotFound();
+            }
+
+            return TypedResults.BadRequest();
         }
 
         // DELETE api/v2/<ProductsController>/<id>
         [HttpDelete("{id}")]
-        public async Task<Results<NoContent, NotFound>> Delete(Guid id)
+        public async Task<Results<NoContent, NotFound, BadRequest>> Delete(Guid id)
         {
-            var actResult = await service.DeleteProductAsync(id);
-            return actResult.Success ? TypedResults.NoContent() : TypedResults.NotFound();
+            var result = await service.DeleteProductAsync(id);
+
+            if (result.Success)
+            {
+                return TypedResults.NoContent();
+            }
+
+            if (result.FailureType == FailureType.Validation || result.FailureType == FailureType.BusinessRule)
+            {
+                return TypedResults.BadRequest();
+            }
+
+            if (result.FailureType == FailureType.NotFound)
+            {
+                return TypedResults.NotFound();
+            }
+
+            return TypedResults.BadRequest();
+
         }
     }
 }

@@ -5,13 +5,6 @@ using Domain.Repositories;
 
 namespace Application.Services;
 
-public class ActResult
-{
-    public bool Success { get; set; }
-    public string? Message { get; set; } = null;
-    public ProductDto? Product { get; set; } = null;
-}
-
 public class ProductService
 {
     private readonly IUnitOfWork unitOfWork;
@@ -33,23 +26,25 @@ public class ProductService
         return (product != null) ? Mapper.Map<ProductDto>(product) : null;
     }
 
-    public async Task<ActResult> CreateProductAsync(ProductDto dto)
+    public async Task<ProductServiceResult> CreateProductAsync(ProductDto dto)
     {
+        dto.Id = Guid.Empty;
+
         var product = Mapper.Map<Product>(dto);
 
         await unitOfWork.ProductRepository.AddAsync(product);
         await unitOfWork.SaveAsync();
 
         var productDto = Mapper.Map<ProductDto>(product);
-        return new ActResult { Success = true, Message = "Product created successfully.", Product = productDto };
+        return new ProductServiceResult { Success = true, Message = "Product created successfully.", ProductDto = productDto };
     }
 
-    public async Task<ActResult> UpdateProductAsync(ProductDto dto)
+    public async Task<ProductServiceResult> UpdateProductAsync(ProductDto dto)
     {
         var product = await unitOfWork.ProductRepository.GetByIdAsync(dto.Id);
         if (product == null)
         {
-            return new ActResult { Success = false, Message = $"Product with id {dto.Id} not found." };
+            return new ProductServiceResult { Success = false, Message = $"Product with id {dto.Id} not found.", FailureType = FailureType.NotFound };
         }
 
         product.Name = dto.Name;
@@ -61,29 +56,29 @@ public class ProductService
         await unitOfWork.ProductRepository.UpdateAsync(product);
         await unitOfWork.SaveAsync();
 
-        return new ActResult { Success = true, Message = "Product updated successfully." };
+        return new ProductServiceResult { Success = true, Message = "Product updated successfully." };
     }
 
-    public async Task<ActResult> DeleteProductAsync(Guid id)
+    public async Task<ProductServiceResult> DeleteProductAsync(Guid id)
     {
         var product = await unitOfWork.ProductRepository.GetByIdAsync(id);
         if (product == null)
         {
-            return new ActResult { Success = false, Message = $"Product with id {id} not found." };
+            return new ProductServiceResult { Success = false, Message = $"Product with id {id} not found.", FailureType = FailureType.NotFound };
         }
 
         await unitOfWork.ProductRepository.DeleteAsync(product);
         await unitOfWork.SaveAsync();
 
-        return new ActResult { Success = true, Message = "Product deleted successfully." };
+        return new ProductServiceResult { Success = true, Message = "Product deleted successfully." };
     }
 
-    public async Task<ActResult> PublishProductAsync(Guid id)
+    public async Task<ProductServiceResult> PublishProductAsync(Guid id)
     {
         var product = await unitOfWork.ProductRepository.GetByIdAsync(id);
         if (product == null)
         {
-            return new ActResult { Success = false, Message = $"Product with id {id} not found." };
+            return new ProductServiceResult { Success = false, Message = $"Product with id {id} not found.", FailureType = FailureType.NotFound };
         }
 
         product.PublishedOnUtc = DateTime.UtcNow;
@@ -91,15 +86,15 @@ public class ProductService
         await unitOfWork.ProductRepository.UpdateAsync(product);
         await unitOfWork.SaveAsync();
 
-        return new ActResult { Success = true, Message = "Product published successfully." };
+        return new ProductServiceResult { Success = true, Message = "Product published successfully." };
     }
 
-    public async Task<ActResult> UnpublishProductAsync(Guid id)
+    public async Task<ProductServiceResult> UnpublishProductAsync(Guid id)
     {
         var product = await unitOfWork.ProductRepository.GetByIdAsync(id);
         if (product == null)
         {
-            return new ActResult { Success = false, Message = $"Product with id {id} not found." };
+            return new ProductServiceResult { Success = false, Message = $"Product with id {id} not found.", FailureType = FailureType.NotFound };
         }
 
         product.PublishedOnUtc = null;
@@ -107,6 +102,6 @@ public class ProductService
         await unitOfWork.ProductRepository.UpdateAsync(product);
         await unitOfWork.SaveAsync();
 
-        return new ActResult { Success = true, Message = "Product unpublished successfully." };
+        return new ProductServiceResult { Success = true, Message = "Product unpublished successfully." };
     }
 }
