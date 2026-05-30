@@ -43,23 +43,7 @@ namespace Api.Controllers.v2
         public async Task<Results<Created<ProductDto>, NotFound, BadRequest>> Post([FromBody] ProductDto dto)
         {
             var result = await service.CreateProductAsync(dto);
-
-            if (result.Success)
-            {
-                return TypedResults.Created($"/api/products/{result.ProductDto?.Id}", result.ProductDto);
-            }
-
-            if (result.FailureType == FailureType.Validation || result.FailureType == FailureType.BusinessRule)
-            {
-                return TypedResults.BadRequest();
-            }
-
-            if (result.FailureType == FailureType.NotFound)
-            {
-                return TypedResults.NotFound();
-            }
-
-            return TypedResults.BadRequest();
+            return MapCreatedToActionResult(result);
         }
 
         // PUT api/v2/<ProductsController>/<id>
@@ -73,23 +57,7 @@ namespace Api.Controllers.v2
             }
 
             var result = await service.UpdateProductAsync(dto);
-
-            if (result.Success)
-            {
-                return TypedResults.NoContent();
-            }
-
-            if (result.FailureType == FailureType.Validation || result.FailureType == FailureType.BusinessRule)
-            {
-                return TypedResults.BadRequest();
-            }
-
-            if (result.FailureType == FailureType.NotFound)
-            {
-                return TypedResults.NotFound();
-            }
-
-            return TypedResults.BadRequest();
+            return MapServiceResultToActionResult(result);
         }
 
         // DELETE api/v2/<ProductsController>/<id>
@@ -97,24 +65,41 @@ namespace Api.Controllers.v2
         public async Task<Results<NoContent, NotFound, BadRequest>> Delete(Guid id)
         {
             var result = await service.DeleteProductAsync(id);
+            return MapServiceResultToActionResult(result);
+        }
 
+        private static Results<Created<ProductDto>, NotFound, BadRequest> MapCreatedToActionResult(ProductServiceResult result)
+        {
             if (result.Success)
             {
-                return TypedResults.NoContent();
+                return TypedResults.Created($"/api/products/{result.ProductDto?.Id}", result.ProductDto);
             }
-
             if (result.FailureType == FailureType.Validation || result.FailureType == FailureType.BusinessRule)
             {
                 return TypedResults.BadRequest();
             }
-
             if (result.FailureType == FailureType.NotFound)
             {
                 return TypedResults.NotFound();
             }
-
             return TypedResults.BadRequest();
+        }
 
+        private static Results<NoContent, NotFound, BadRequest> MapServiceResultToActionResult(ProductServiceResult result)
+        {
+            if (result.Success)
+            {
+                return TypedResults.NoContent();
+            }
+            if (result.FailureType == FailureType.Validation || result.FailureType == FailureType.BusinessRule)
+            {
+                return TypedResults.BadRequest();
+            }
+            if (result.FailureType == FailureType.NotFound)
+            {
+                return TypedResults.NotFound();
+            }
+            return TypedResults.BadRequest();
         }
     }
 }
