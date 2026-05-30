@@ -40,7 +40,7 @@ namespace Api.Controllers.v2
 
         // POST api/v2/<ProductsController>
         [HttpPost]
-        public async Task<Results<Created<ProductDto>, NotFound, BadRequest>> Post([FromBody] ProductDto dto)
+        public async Task<Results<CreatedAtRoute<ProductDto>, NotFound, BadRequest>> Post([FromBody] ProductDto dto)
         {
             var result = await service.CreateProductAsync(dto);
             return MapCreatedToActionResult(result);
@@ -68,11 +68,13 @@ namespace Api.Controllers.v2
             return MapServiceResultToActionResult(result);
         }
 
-        private static Results<Created<ProductDto>, NotFound, BadRequest> MapCreatedToActionResult(ProductServiceResult result)
+        private static Results<CreatedAtRoute<ProductDto>, NotFound, BadRequest> MapCreatedToActionResult(ProductServiceResult result)
         {
             if (result.Success)
             {
-                return TypedResults.Created($"/api/products/{result.ProductDto?.Id}", result.ProductDto);
+                return TypedResults.CreatedAtRoute(
+                   result.ProductDto,
+                   routeValues: new { id = result.ProductDto!.Id });
             }
             if (result.FailureType == FailureType.Validation || result.FailureType == FailureType.BusinessRule)
             {
