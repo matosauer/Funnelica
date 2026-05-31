@@ -2,7 +2,6 @@ using Application.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Persistence.Database;
@@ -17,16 +16,17 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.UseEnvironment("Development");
 
-        builder.ConfigureAppConfiguration((_, config) =>
-        {
-            config.AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ConnectionStrings:Funnelica"] = "Server=(localdb)\\mssqllocaldb;Database=FunnelicaTests;Trusted_Connection=True;"
-            });
-        });
+        //builder.ConfigureAppConfiguration((_, config) =>
+        //{
+        //    config.AddInMemoryCollection(new Dictionary<string, string?>
+        //    {
+        //        ["ConnectionStrings:Funnelica"] = "Server=(localdb)\\mssqllocaldb;Database=FunnelicaTests;Trusted_Connection=True;"
+        //    });
+        //});
 
         builder.ConfigureServices(services =>
         {
+            // Remove the existing ApplicationDbContext registration
             var dbContextDescriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
             if (dbContextDescriptor is not null)
@@ -34,9 +34,11 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>
                 services.Remove(dbContextDescriptor);
             }
 
+            // Add ApplicationDbContext with an in-memory database for testing
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseInMemoryDatabase($"FunnelicaTests_{Guid.NewGuid()}"));
 
+            // Remove the existing IProductService registration
             var productServiceDescriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(IProductService));
             if (productServiceDescriptor is not null)
@@ -44,6 +46,7 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>
                 services.Remove(productServiceDescriptor);
             }
 
+            // Add the mocked IProductService
             services.AddScoped(_ => ProductServiceMock.Object);
         });
     }
