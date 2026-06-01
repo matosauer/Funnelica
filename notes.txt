@@ -32,7 +32,12 @@ http://localhost:5281/openapi/v2.json
 
 Scalar renders OpenAPI documents
 http://localhost:5281/scalar/
+https://localhost:7169/scalar
 
 
 Run tests:
-dotnet test External/Api.Tests/Api.Tests.csproj
+/> dotnet test External/Api.Tests/Api.Tests.csproj
+
+Run profile:
+/> dotnet run -lp prod
+
