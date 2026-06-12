@@ -15,6 +15,10 @@ Note: You need to open a new command prompt for the changes to take effect.
 or
 /> set | find "ConnectionStrings"
 
+In web.config as environment variable it will be represented as:
+	<environmentVariable name="ConnectionStrings:Funnelica" value="Data Source=(local)\SQLEXPRESS;... />.
+
+
 *** Run migrations from the solution folder:
 dotnet ef migrations add InitialCreate --startup-project External/API --project External/Persistence --output-dir "Database/Migrations"
 dotnet ef database update --startup-project External/API --project External/Persistence
@@ -41,3 +45,20 @@ Run tests:
 Run profile:
 /> dotnet run -lp prod
 
+IIS localy
+	
+IIS creates a virtual account: IIS AppPool\Funnelica
+Application Pool settings:	
+	.NET CLR Version: No Managed Code
+	Managed Pipeline Mode: Integrated
+	Identity: ApplicationPoolIdentity
+
+Connection string localy can be set as an environment variable in IIS, via site Configuration Editor.
+	
+SQL Server Configuration
+1) Create a new database server login in Security/Logins : IIS AppPool\Funnelica
+2) Create a new Funnelica DB user in Security/Users : user name- IIS AppPool\Funnelica | login name- IIS AppPool\Funnelica 
+	
+Log files
+The logging needs write permissions to the /Log folder	
+The folder can be secured giving it the virtual user
