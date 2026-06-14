@@ -1,0 +1,29 @@
+﻿@using Application.DTOs
+@{
+    @model IEnumerable<ProductDto>;
+
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+
+        @foreach (var product in Model)
+        {
+            <div class="card mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                    <img src="@product.PictureUrl" class="img-fluid rounded-start" alt="@product.Name">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text">@product.Description</p>
+                            <p class="card-text"><strong>$@product.Price.ToString("F2")</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+</div>

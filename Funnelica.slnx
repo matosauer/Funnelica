@@ -7,6 +7,7 @@
     <Project Path="External/Api.Tests/Api.Tests.csproj" />
     <Project Path="External/Api/Api.csproj" Id="34c5837a-3056-4939-925a-51d79d766ddb" />
     <Project Path="External/Persistence/Persistence.csproj" Id="e34118bc-c9c2-478b-958c-765b45faace8" />
+    <Project Path="External/Web/Web.csproj" Id="2a64e15e-d372-49a8-a70e-8c7c80ca4d37" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="notes.txt" />
