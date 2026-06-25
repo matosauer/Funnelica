@@ -20,7 +20,7 @@ public class ProductService : IProductService
         return Mapper.Map<IEnumerable<ProductDto>>(products);
     }
 
-    public async Task<ProductDto?> GetByIdAsync(Guid id)
+    public async Task<ProductDto?> GetProductByIdAsync(Guid id)
     {
         var product = await unitOfWork.ProductRepository.GetByIdAsync(id);
         return (product != null) ? Mapper.Map<ProductDto>(product) : null;

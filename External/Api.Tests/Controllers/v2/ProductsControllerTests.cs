@@ -1,7 +1,7 @@
-using Application.DTOs;
-using Application.Services;
 using Api.Controllers.v2;
 using Api.Tests.Helpers;
+using Application.DTOs;
+using Application.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -45,7 +45,7 @@ public class ProductsControllerTests
     {
         var id = Guid.NewGuid();
         var product = CreateDto(id);
-        serviceMock.Setup(s => s.GetByIdAsync(id)).ReturnsAsync(product);
+        serviceMock.Setup(s => s.GetProductByIdAsync(id)).ReturnsAsync(product);
 
         var snapshot = await HttpResultTestHelper.InvokeAsync(await controller.Get(id));
 
@@ -58,7 +58,7 @@ public class ProductsControllerTests
     public async Task GetById_ReturnsNotFound_WhenProductDoesNotExist()
     {
         var id = Guid.NewGuid();
-        serviceMock.Setup(s => s.GetByIdAsync(id)).ReturnsAsync((ProductDto?)null);
+        serviceMock.Setup(s => s.GetProductByIdAsync(id)).ReturnsAsync((ProductDto?)null);
 
         var snapshot = await HttpResultTestHelper.InvokeAsync(await controller.Get(id));
 

@@ -1,8 +1,8 @@
-using System.Net;
-using System.Net.Http.Json;
 using Application.DTOs;
 using Application.Services;
 using Moq;
+using System.Net;
+using System.Net.Http.Json;
 
 namespace Api.Tests.Controllers.v2;
 
@@ -49,7 +49,7 @@ public class ProductsControllerIntegrationTests : IClassFixture<ApiWebApplicatio
     {
         var id = Guid.NewGuid();
         factory.ProductServiceMock
-            .Setup(s => s.GetByIdAsync(id))
+            .Setup(s => s.GetProductByIdAsync(id))
             .ReturnsAsync((ProductDto?)null);
 
         using var client = factory.CreateClient();

@@ -34,7 +34,7 @@ namespace Api.Controllers.v2
         [HttpGet("{id}")]
         public async Task<Results<Ok<ProductDto>, NotFound>> Get(Guid id)
         {
-            var product = await service.GetByIdAsync(id);
+            var product = await service.GetProductByIdAsync(id);
             return product != null ? TypedResults.Ok(product) : TypedResults.NotFound();
         }
 

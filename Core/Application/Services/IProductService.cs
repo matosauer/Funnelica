@@ -5,7 +5,7 @@ namespace Application.Services;
 public interface IProductService
 {
     Task<IEnumerable<ProductDto>> GetAllProductsAsync();
-    Task<ProductDto?> GetByIdAsync(Guid id);
+    Task<ProductDto?> GetProductByIdAsync(Guid id);
     Task<ProductServiceResult> CreateProductAsync(ProductDto dto);
     Task<ProductServiceResult> UpdateProductAsync(ProductDto dto);
     Task<ProductServiceResult> DeleteProductAsync(Guid id);
