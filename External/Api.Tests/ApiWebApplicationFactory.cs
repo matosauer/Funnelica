@@ -14,27 +14,21 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Development");
-
-        //builder.ConfigureAppConfiguration((_, config) =>
-        //{
-        //    config.AddInMemoryCollection(new Dictionary<string, string?>
-        //    {
-        //        ["ConnectionStrings:Funnelica"] = "Server=(localdb)\\mssqllocaldb;Database=FunnelicaTests;Trusted_Connection=True;"
-        //    });
-        //});
+        builder.UseEnvironment("Testing");
 
         builder.ConfigureServices(services =>
         {
-            // Remove the existing ApplicationDbContext registration
-            var dbContextDescriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
-            if (dbContextDescriptor is not null)
+            var dbContextDescriptors = services
+                .Where(d =>
+                    d.ServiceType == typeof(ApplicationDbContext) ||
+                    d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>))
+                .ToList();
+
+            foreach (var descriptor in dbContextDescriptors)
             {
-                services.Remove(dbContextDescriptor);
+                services.Remove(descriptor);
             }
 
-            // Add ApplicationDbContext with an in-memory database for testing
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseInMemoryDatabase($"FunnelicaTests_{Guid.NewGuid()}"));
 

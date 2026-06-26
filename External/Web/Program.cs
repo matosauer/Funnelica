@@ -2,6 +2,8 @@ using Application.Services;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database;
+using Persistence.DependencyInjection;
+using Persistence.Identity;
 using Persistence.Repositories;
 using Serilog;
 
@@ -9,7 +11,7 @@ namespace Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,8 @@ namespace Web
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("Funnelica") ?? throw new InvalidOperationException("Connection string not found!")));
+
+            builder.Services.AddFunnelicaIdentityCore();
 
             //logger
             builder.Host.UseSerilog((context, loggerConfiguration) =>
@@ -45,7 +49,15 @@ namespace Web
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            if (app.Environment.IsEnvironment("Development"))
+            {
+                using var scope = app.Services.CreateScope();
+                var seeder = scope.ServiceProvider.GetRequiredService<IdentitySeeder>();
+                await seeder.SeedAsync();
+            }
 
             app.MapStaticAssets();
 
