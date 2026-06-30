@@ -2,10 +2,10 @@ using Application.Services;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database;
-using Persistence.DependencyInjection;
 using Persistence.Identity;
 using Persistence.Repositories;
 using Serilog;
+using Web.Services;
 
 namespace Web
 {
@@ -26,7 +26,8 @@ namespace Web
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("Funnelica") ?? throw new InvalidOperationException("Connection string not found!")));
 
-            builder.Services.AddFunnelicaIdentityCore();
+            ////builder.Services.AddFunnelicaIdentityCore();
+            builder.Services.AddFunnelicaWebIdentity();
 
             //logger
             builder.Host.UseSerilog((context, loggerConfiguration) =>

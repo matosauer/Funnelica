@@ -20,10 +20,10 @@ public static class IdentityServiceExtensions
                 options.Password.RequireNonAlphanumeric = false;
                 options.User.RequireUniqueEmail = true;
             })
-            .AddRoles<IdentityRole>()
+            .AddRoles<IdentityRole>() // Manually add role support
             .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddSignInManager()
-            .AddDefaultTokenProviders();
+            .AddSignInManager() // Manually add SignInManager
+            .AddDefaultTokenProviders(); // Required for password resets/email tokens
 
         services.AddScoped<IdentitySeeder>();
 

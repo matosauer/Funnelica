@@ -1,8 +1,8 @@
+using Api.Services;
 using Application.Services;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database;
-using Persistence.DependencyInjection;
 using Persistence.Identity;
 using Persistence.Repositories;
 using Scalar.AspNetCore;
@@ -25,7 +25,9 @@ namespace Api
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("Funnelica") ?? throw new InvalidOperationException("Connection string not found!")));
 
-            builder.Services.AddFunnelicaIdentityCore();
+            ////builder.Services.AddFunnelicaIdentityCore();
+            builder.Services.AddFunnelicaApiAuth(builder.Configuration);
+
 
             builder.Services.AddControllers();
 
